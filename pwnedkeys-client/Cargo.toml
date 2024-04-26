@@ -5,5 +5,5 @@ edition = "2021"
 
 [dependencies]
 pwnedkeys-core = { path = "../pwnedkeys-core" }
-reqwest = "0.12"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "http2"] }
 thiserror = "1.0"
