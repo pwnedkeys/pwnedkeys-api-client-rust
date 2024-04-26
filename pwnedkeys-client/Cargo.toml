@@ -1,0 +1,9 @@
+[package]
+name = "pwnedkeys-client"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+pwnedkeys-core = { path = "../pwnedkeys-core" }
+reqwest = "0.12"
+thiserror = "1.0"

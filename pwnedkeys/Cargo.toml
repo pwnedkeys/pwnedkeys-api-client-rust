@@ -1,0 +1,8 @@
+[package]
+name = "pwnedkeys"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+pwnedkeys-client = { path = "../pwnedkeys-client" }
+pwnedkeys-core = { path = "../pwnedkeys-core" }

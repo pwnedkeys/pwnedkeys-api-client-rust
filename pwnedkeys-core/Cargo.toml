@@ -1,0 +1,21 @@
+[package]
+name = "pwnedkeys-core"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+const-oid = { version = "0.9", features = ["db"] }
+elliptic-curve = { version = "0.13", features = ["arithmetic", "pkcs8"] }
+hex = "0.4"
+p256 = { version = "0.13", features = ["arithmetic"] }
+p384 = { version = "0.13", features = ["arithmetic"] }
+p521 = { version = "0.13", features = ["arithmetic"] }
+pkcs1 = "0.7"
+pkcs8 = { version = "0.10", features = ["std"] }
+rsa = "0.9"
+sec1 = { version = "0.7", features = ["std"] }
+spki = { version = "0.7", features = ["std", "fingerprint"] }
+ssh-key = { version = "0.6", features = ["rsa"] }
+x509-cert = "0.2"
