@@ -1,3 +1,4 @@
+mod error;
 mod key;
 
-pub use key::Key;
+pub use self::{error::Error, key::Key};

@@ -18,4 +18,5 @@ rsa = "0.9"
 sec1 = { version = "0.7", features = ["std"] }
 spki = { version = "0.7", features = ["std", "fingerprint"] }
 ssh-key = { version = "0.6", features = ["rsa"] }
+thiserror = "1.0"
 x509-cert = "0.2"
