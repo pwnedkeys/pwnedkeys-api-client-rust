@@ -92,10 +92,6 @@ impl TryFrom<&ssh_key::public::KeyData> for Key {
     }
 }
 
-fn cnds<E>(e: E) -> String where E: std::fmt::Display {
-    format!("could not decode SSH key: {e}")
-}
-
 impl TryFrom<&ssh_key::public::RsaPublicKey> for Key {
     type Error = Error;
 
@@ -117,10 +113,6 @@ impl TryFrom<&ssh_key::public::EcdsaPublicKey> for Key {
     }
 }
 
-fn cnd8<E>(e: E) -> String where E: std::fmt::Display {
-    format!("could not decode PKCS#8: {e}")
-}
-
 impl TryFrom<pkcs8::PrivateKeyInfo<'_>> for Key {
     type Error = Error;
 
@@ -130,34 +122,26 @@ impl TryFrom<pkcs8::PrivateKeyInfo<'_>> for Key {
             // RSA
             pkcs8::PrivateKeyInfo { algorithm: AlgorithmIdentifier { oid: pkcs1::ALGORITHM_OID, .. }, private_key: der, .. } =>
                 rsa::RsaPrivateKey::from_pkcs1_der(der)?
-//                    .map_err(cnd8)?
                     .to_public_key()
                     .to_public_key_der()?
-//                    .map_err(cnd8)?
                     .decode_msg::<SubjectPublicKeyInfoOwned>()?,
-//                    .map_err(cnd8)?,
             // ECDSA
             pkcs8::PrivateKeyInfo { algorithm: AlgorithmIdentifier { oid: elliptic_curve::ALGORITHM_OID, parameters: Some(params) }, .. } => {
-                let curve: ObjectIdentifier = params.try_into()?; //.map_err(cnd8)?;
+                let curve: ObjectIdentifier = params.try_into()?;
 
                 match curve {
                     SECP_256_R_1 => <pkcs8::PrivateKeyInfo<'_> as TryInto<p256::SecretKey>>::try_into(pki)?
-//                        .map_err(cnd8)?
                         .public_key()
                         .to_public_key_der(),
                     SECP_384_R_1 => <pkcs8::PrivateKeyInfo<'_> as TryInto<p384::SecretKey>>::try_into(pki)?
-//                        .map_err(cnd8)?
                         .public_key()
                         .to_public_key_der(),
                     SECP_521_R_1 => <pkcs8::PrivateKeyInfo<'_> as TryInto<p521::SecretKey>>::try_into(pki)?
-//                        .map_err(cnd8)?
                         .public_key()
                         .to_public_key_der(),
                     _ => Err(Error::unsupported_curve(curve.to_string()))?,
                 }?
-//                .map_err(cnd8)?
                 .decode_msg::<SubjectPublicKeyInfoOwned>()?
-//                .map_err(cnd8)?
             },
             _ => Err(Error::unsupported_algorithm(pki.algorithm.oid.to_string()))?,
         };

@@ -1,5 +1,3 @@
-use std::backtrace::Backtrace;
-
 #[derive(Debug, thiserror::Error)]
 #[non_exhaustive]
 pub enum Error {
