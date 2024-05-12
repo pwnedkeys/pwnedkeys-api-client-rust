@@ -9,9 +9,9 @@ pub struct AsyncClient {
 }
 
 impl AsyncClient {
-    pub fn new(api_key: Option<String>) -> Self {
+    pub fn new(api_key: Option<impl Into<String>>) -> Self {
         Self {
-            api_key: api_key,
+            api_key: api_key.map(|s| s.into()),
             base_url: reqwest::Url::parse("https://v1.pwnedkeys.com").unwrap(),
             client: reqwest::Client::new(),
         }
