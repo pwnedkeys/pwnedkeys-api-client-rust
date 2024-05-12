@@ -1,6 +1,7 @@
 use const_oid::{db::rfc5912::{ID_EC_PUBLIC_KEY, RSA_ENCRYPTION, SECP_256_R_1, SECP_384_R_1, SECP_521_R_1}, ObjectIdentifier};
 use rsa::pkcs1::DecodeRsaPrivateKey;
 use spki::{AlgorithmIdentifier, EncodePublicKey, SubjectPublicKeyInfoOwned};
+use ssh_key::authorized_keys::Entry as KeyEntry;
 
 use crate::Error;
 
@@ -13,6 +14,16 @@ pub struct Key {
 impl Key {
     pub fn fingerprint(&self) -> String {
         hex::encode(self.spki.fingerprint_bytes().unwrap())
+    }
+
+    pub fn maybe_from_line(l: impl AsRef<str>) -> Option<Self> {
+        let key_part = if let Some((chunk, _)) = l.as_ref().split_once('#') {
+            chunk
+        } else {
+            l.as_ref()
+        };
+
+        key_part.parse::<KeyEntry>().map(|k| k.public_key().try_into().ok()).ok()?
     }
 }
 
