@@ -7,6 +7,8 @@ edition = "2021"
 
 [dependencies]
 const-oid = { version = "0.9", features = ["db"] }
+# pkcs8 feature not semver on ed25519
+ed25519 = { version = "~2.2", features = ["pkcs8", "alloc"] }
 elliptic-curve = { version = "0.13", features = ["arithmetic", "pkcs8"] }
 hex = "0.4"
 p256 = { version = "0.13", features = ["arithmetic"] }

@@ -87,6 +87,9 @@ impl TryFrom<&ssh_key::public::KeyData> for Key {
         match key {
             ssh_key::public::KeyData::Rsa(k) => k.try_into(),
             ssh_key::public::KeyData::Ecdsa(k) => k.try_into(),
+            ssh_key::public::KeyData::SkEcdsaSha2NistP256(k) => k.try_into(),
+            ssh_key::public::KeyData::Ed25519(k) => k.try_into(),
+            ssh_key::public::KeyData::SkEd25519(k) => k.public_key().try_into(),
             _ => Err(Error::UnsupportedAlgorithm(key.algorithm().to_string())),
         }
     }
@@ -110,6 +113,22 @@ impl TryFrom<&ssh_key::public::EcdsaPublicKey> for Key {
             ssh_key::public::EcdsaPublicKey::NistP521(point) => p521::PublicKey::from_sec1_bytes(point.as_bytes())?.to_public_key_der(),
         }?.decode_msg()?;
         Ok(Self { spki })
+    }
+}
+
+impl TryFrom<&ssh_key::public::SkEcdsaSha2NistP256> for Key {
+    type Error = Error;
+
+    fn try_from(key: &ssh_key::public::SkEcdsaSha2NistP256) -> Result<Self, Self::Error> {
+        Ok(Self { spki: p256::PublicKey::from_sec1_bytes(key.ec_point().as_bytes())?.to_public_key_der()?.decode_msg()? })
+    }
+}
+
+impl TryFrom<&ssh_key::public::Ed25519PublicKey> for Key {
+    type Error = Error;
+
+    fn try_from(key: &ssh_key::public::Ed25519PublicKey) -> Result<Self, Self::Error> {
+        Ok(Self { spki: ed25519::pkcs8::PublicKeyBytes(key.0).to_public_key_der()?.decode_msg()? })
     }
 }
 
